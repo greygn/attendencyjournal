@@ -1,10 +1,12 @@
 package ru.krylov.attendencyjournal.controller;
 
 import org.springframework.web.bind.annotation.*;
+import ru.krylov.attendencyjournal.dto.CreateLessonRequest;
 import ru.krylov.attendencyjournal.entity.Lesson;
 import ru.krylov.attendencyjournal.service.LessonService;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,19 +23,12 @@ public class LessonController {
     }
 
     @PostMapping
-    public Lesson create(@RequestBody Map<String, Object> body) {
-
-        String name = (String) body.get("name");
-        LocalDateTime datetime =
-                LocalDateTime.parse((String) body.get("datetime"));
-
-        List<Integer> ids = (List<Integer>) body.get("groupIds");
-
-        Set<Long> groupIds = ids.stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toSet());
-
-        return service.create(name, datetime, groupIds);
+    public Lesson create(@RequestBody CreateLessonRequest request) {
+        return service.create(
+                request.getName(),
+                request.getDatetime(),
+                new HashSet<>(request.getGroupIds())
+        );
     }
 
     @GetMapping

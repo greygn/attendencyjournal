@@ -1,6 +1,7 @@
 package ru.krylov.attendencyjournal.controller;
 
 import org.springframework.web.bind.annotation.*;
+import ru.krylov.attendencyjournal.dto.CheckinRequest;
 import ru.krylov.attendencyjournal.entity.Checkin;
 import ru.krylov.attendencyjournal.service.CheckinService;
 
@@ -17,10 +18,10 @@ public class CheckinController {
     }
 
     @PostMapping
-    public Checkin mark(@RequestBody Map<String, Long> body) {
+    public Checkin mark(@RequestBody CheckinRequest request) {
         return service.markAttendance(
-                body.get("lessonId"),
-                body.get("studentId")
+                request.getLessonId(),
+                request.getStudentId()
         );
     }
 

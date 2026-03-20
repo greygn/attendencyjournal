@@ -1,6 +1,7 @@
 package ru.krylov.attendencyjournal.controller;
 
 import org.springframework.web.bind.annotation.*;
+import ru.krylov.attendencyjournal.dto.CreateGroupRequest;
 import ru.krylov.attendencyjournal.entity.StudyGroup;
 import ru.krylov.attendencyjournal.service.StudyGroupService;
 
@@ -18,10 +19,10 @@ public class StudyGroupController {
     }
 
     @PostMapping
-    public StudyGroup create(@RequestBody Map<String, Object> body) {
+    public StudyGroup create(@RequestBody CreateGroupRequest request) {
         return service.create(
-                (String) body.get("name"),
-                (Integer) body.get("course")
+                request.getName(),
+                request.getCourse()
         );
     }
 
