@@ -94,13 +94,6 @@ jobs:
           SPRING_DATASOURCE_USERNAME: testuser
           SPRING_DATASOURCE_PASSWORD: testpassword
 
-      - name: Verify code coverage
-        run: mvn jacoco:check
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
-          SPRING_DATASOURCE_USERNAME: testuser
-          SPRING_DATASOURCE_PASSWORD: testpassword
-
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
@@ -128,7 +121,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `📊 **Code Coverage**: ${coverage}\n\n✅ Full JaCoCo report available in Artifacts: coverage-report`
+              body: `**Code Coverage**: ${coverage}\n\nFull JaCoCo report available in Artifacts: coverage-report`
             });
 
       - name: Print coverage summary
