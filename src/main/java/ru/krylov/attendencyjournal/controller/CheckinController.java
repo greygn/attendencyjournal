@@ -1,11 +1,14 @@
 package ru.krylov.attendencyjournal.controller;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.krylov.attendencyjournal.dto.CheckinRequest;
 import ru.krylov.attendencyjournal.entity.Checkin;
 import ru.krylov.attendencyjournal.service.CheckinService;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/checkins")
@@ -21,8 +24,7 @@ public class CheckinController {
     public Checkin mark(@RequestBody CheckinRequest request) {
         return service.markAttendance(
                 request.getLessonId(),
-                request.getStudentId()
-        );
+                request.getStudentId());
     }
 
     @GetMapping("/student/{id}/count")

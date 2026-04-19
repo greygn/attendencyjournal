@@ -1,204 +1,169 @@
-# Система учёта посещаемости студентов
+# Attendance Journal
 
-## Описание проекта
+REST API для управления посещаемостью студентов.
 
-REST API для управления посещаемостью студентов на занятиях с возможностью добавления, редактирования и удаления записей. Система позволяет отслеживать посещение студентов на учебных занятиях, организованных по учебным группам.
+## Описание
 
-## Архитектура
+Приложение предоставляет HTTP API для работы с учебными группами, студентами, занятиями и регистрацией посещаемости. База данных построена на PostgreSQL.
 
-### Компоненты
-
-- **Spring Boot 4.0.3** — REST API приложение для управления посещаемостью (Java 21)
-- **PostgreSQL 18 Alpine** — реляционная база данных для хранения информации
-- **Docker Network (bridge)** — изолированная сеть для взаимодействия контейнеров
-
-### Структура данных
-
-Реляционная база содержит таблицы:
-
-- `study_groups` — учебные группы (id, name, course_number)
-- `students` — студенты (id, name, group_id)
-- `lessons` — занятия (id, name, datetime)
-- `lesson_study_groups` — связь многие-ко-многим между занятиями и группами (lesson_id, group_id)
-- `checkins` — отметки посещаемости (id, student_id, lesson_id, checked_at)
-
-## Быстрый старт
-
-### Требования
-
-- Docker и Docker Compose
-- Файл `.env` с переменными окружения
-
-### Установка
-
-1. **Подготовить `.env` файл** в корне проекта:
-
-```env
-POSTGRES_USER=journaluser
-POSTGRES_PASSWORD=secret
-POSTGRES_DB=appdb
-```
-
-2. **Запустить сервисы**:
+## Запуск через Docker Compose
 
 ```bash
-docker compose down -v
-docker compose build --no-cache
-docker compose up
+docker-compose up
 ```
 
-3. **Проверить логи**:
+API будет доступен по адресу `http://localhost:8080`.
+
+## Локальная разработка
+
+### Предварительные требования
+
+- Maven 3.9+
+- Java 21+
+- PostgreSQL 16+ (для локального развертывания)
+
+### Запуск тестов
 
 ```bash
-docker compose logs -f app
+mvn clean test
 ```
 
-Приложение будет доступно по адресу `http://localhost:8080`.
+Выполняются unit тесты с проверкой coverage (минимум 50%).
 
-## API Endpoints
-
-### Учебные группы
+### Сборка
 
 ```bash
-# Создать группу
-POST /study-groups
-Content-Type: application/json
-{
-  "name": "b1-IFST-32",
-  "courseNumber": 3
-}
-
-# Получить все группы
-GET /study-groups
+mvn clean package
 ```
 
-### Студенты
+### Проверка качества кода
 
 ```bash
-# Создать студента
-POST /students
-Content-Type: application/json
-{
-  "name": "Ivan Petrov",
-  "groupId": 1
-}
-
-# Получить всех студентов
-GET /students
+mvn checkstyle:check
 ```
 
-### Занятия
+### Запуск приложения локально
+
+Требуется работающий PostgreSQL. Установите переменные окружения:
 
 ```bash
-# Создать занятие
-POST /lessons
-Content-Type: application/json
-{
-  "name": "Mobile App Development",
-  "datetime": "2026-03-09T09:45:00",
-  "groupIds": [1, 2]
-}
-
-# Получить все занятия
-GET /lessons
+export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/attendancy_db
+export SPRING_DATASOURCE_USERNAME=journaluser
+export SPRING_DATASOURCE_PASSWORD=password
 ```
 
-### Отметки посещаемости
+Затем запустите:
 
 ```bash
-# Отметить посещаемость студента
-POST /checkins
-Content-Type: application/json
-{
-  "studentId": 1,
-  "lessonId": 1
-}
-
-# Получить количество посещений студента
-GET /checkins/student/{id}/count
+mvn spring-boot:run
 ```
 
-## Реализованные функции
+## Docker
 
-### Основной функционал
-
-- [x] Двухконтейнерная архитектура (Spring Boot App + PostgreSQL)
-- [x] Bridge-сеть для изолированного взаимодействия контейнеров
-- [x] REST API с CRUD операциями для всех сущностей
-- [x] Управление учебными группами (создание, просмотр)
-- [x] Управление студентами (создание, просмотр, привязка к группам)
-- [x] Управление занятиями (создание, просмотр, привязка к группам)
-- [x] Отметки посещаемости студентов (создание, просмотр)
-
-### Требования к Docker (соблюдены)
-
-- [x] Организована docker-сеть в Docker-Compose файле (bridge network `app-network`)
-- [x] Билд Docker-контейнера выполняется на любом окружении (multi-stage build с Maven)
-- [x] Dockerfile разбит на разные stages (build и runtime)
-- [x] Доступ извне docker-сети только к API (порт 8080 открыт только для app)
-- [x] База данных без port-forwarding (скрыта в docker-сети)
-- [x] Поддиректория volume для PostgreSQL (pgdata volume)
-- [x] Отсутствуют пароли в Dockerfile и docker-compose
-- [x] Приложение получает конфиденциальные данные из переменных окружения
-
-## Технические детали
-
-### Multi-stage Dockerfile
-
-Dockerfile использует два этапа для оптимизации размера образа:
-
-1. **Build stage** — использует Maven 3.9 с JDK 21 для сборки приложения
-   - Копирует `pom.xml` и загружает зависимости
-   - Компилирует проект и создаёт JAR-файл
-2. **Runtime stage** — использует облегчённый `eclipse-temurin:21-jre`
-   - Содержит только необходимые компоненты для запуска
-   - Копирует готовый JAR из build stage
-
-Результат: образ содержит только JRE и приложение, без инструментов сборки.
-
-### Docker Compose конфигурация
-
-- **PostgreSQL** — работает в контейнере с изолированным хранилищем (volume `pgdata`)
-- **Spring Boot App** — зависит от БД (`depends_on`), получает параметры подключения из переменных окружения
-- **Bridge Network** — контейнеры взаимодействуют по имени сервиса (`db:5432`)
-
-### Переменные окружения
-
-Приложение использует следующие переменные:
-
-- `POSTGRES_USER` — имя пользователя PostgreSQL
-- `POSTGRES_PASSWORD` — пароль PostgreSQL
-- `POSTGRES_DB` — название базы данных
-- `SPRING_DATASOURCE_URL` — URL подключения к БД (конструируется автоматически из переменных)
-- `SPRING_DATASOURCE_USERNAME` — логин для приложения
-- `SPRING_DATASOURCE_PASSWORD` — пароль для приложения
-
-## Мониторинг
-
-Все события логируются в консоль. Примеры логов:
-
-```
-2026-03-09 10:15:30.123  INFO 1 --- [main] r.k.a.AttendencyjournalApplication      : Starting AttendencyjournalApplication
-2026-03-09 10:15:35.567  INFO 1 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080
-2026-03-09 10:15:35.589  INFO 1 --- [main] r.k.a.AttendencyjournalApplication      : Started AttendencyjournalApplication in 5.466 seconds
-```
-
-### Проверка здоровья
+### Сборка образа
 
 ```bash
-# Проверить доступность API
-curl http://localhost:8080/study-groups
+docker build -t attendencyjournal:latest .
 ```
 
-## Остановка и очистка
+### Запуск контейнера
 
 ```bash
-# Остановить контейнеры
-docker compose down
+docker run -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/appdb \
+  -e SPRING_DATASOURCE_USERNAME=journaluser \
+  -e SPRING_DATASOURCE_PASSWORD=password \
+  attendencyjournal:latest
+```
 
-# Остановить контейнеры и удалить volumes
-docker compose down -v
+## CI/CD
 
-# Пересобрать образы и запустить заново
-docker compose down -v && docker compose build --no-cache && docker compose up
+GitHub Actions pipeline автоматически запускается при push в `main` или `develop`. Pipeline включает:
+
+- Сборку кода
+- Проверку Checkstyle
+- Запуск тестов с проверкой coverage
+- Сборку Docker образа
+- Публикацию образа в Docker Hub
+
+Для работы с Docker Hub, добавьте GitHub Secrets:
+
+- `DOCKER_HUB_USERNAME`
+- `DOCKER_HUB_TOKEN`
+
+## Структура проекта
+
+```
+src/main/java/ru/krylov/attendencyjournal/
+├── controller/       HTTP endpoints
+├── service/          Бизнес-логика
+├── entity/           Модели базы данных
+├── repository/       Data access
+└── dto/             Transfer objects
+```
+
+## Endpoints
+
+### Study Groups
+
+**POST /groups** — Создать учебную группу
+
+```bash
+curl -X POST http://localhost:8080/groups \
+  -H "Content-Type: application/json" \
+  -d '{"name": "b1-IFST-32", "courseNumber": 3}'
+```
+
+**GET /groups** — Получить все группы
+
+```bash
+curl http://localhost:8080/groups
+```
+
+### Students
+
+**POST /students** — Создать студента
+
+```bash
+curl -X POST http://localhost:8080/students \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Ivan Petrov", "groupId": 1}'
+```
+
+**GET /students** — Получить всех студентов
+
+```bash
+curl http://localhost:8080/students
+```
+
+### Lessons
+
+**POST /lessons** — Создать занятие
+
+```bash
+curl -X POST http://localhost:8080/lessons \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Lecture", "datetime": "2026-04-09T09:45:00", "groupIds": [1]}'
+```
+
+**GET /lessons** — Получить все занятия
+
+```bash
+curl http://localhost:8080/lessons
+```
+
+### Checkins
+
+**POST /checkins** — Отметить посещение
+
+```bash
+curl -X POST http://localhost:8080/checkins \
+  -H "Content-Type: application/json" \
+  -d '{"lessonId": 1, "studentId": 1}'
+```
+
+**GET /checkins/student/{id}/count** — Получить количество посещений студента
+
+```bash
+curl http://localhost:8080/checkins/student/1/count
 ```

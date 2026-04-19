@@ -1,16 +1,16 @@
 package ru.krylov.attendencyjournal.controller;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.krylov.attendencyjournal.dto.CreateLessonRequest;
 import ru.krylov.attendencyjournal.entity.Lesson;
 import ru.krylov.attendencyjournal.service.LessonService;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/lessons")
@@ -27,8 +27,7 @@ public class LessonController {
         return service.create(
                 request.getName(),
                 request.getDatetime(),
-                new HashSet<>(request.getGroupIds())
-        );
+                new HashSet<>(request.getGroupIds()));
     }
 
     @GetMapping

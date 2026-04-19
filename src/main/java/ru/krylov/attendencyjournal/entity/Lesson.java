@@ -1,6 +1,13 @@
 package ru.krylov.attendencyjournal.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -19,11 +26,7 @@ public class Lesson {
     private LocalDateTime lessonDatetime;
 
     @ManyToMany
-    @JoinTable(
-            name = "lesson_groups",
-            joinColumns = @JoinColumn(name = "lesson_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id")
-    )
+    @JoinTable(name = "lesson_groups", joinColumns = @JoinColumn(name = "lesson_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<StudyGroup> groups = new HashSet<>();
 
     public String getName() {
@@ -32,6 +35,14 @@ public class Lesson {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDateTime getLessonDatetime() {
