@@ -11,7 +11,7 @@ RUN mvn clean package -DskipTests -B
 # ---------- Stage 2: runtime ----------
 FROM eclipse-temurin:21-jre
 
-RUN useradd -m -u 1000 appuser
+RUN useradd -m -u 1001 appuser
 
 WORKDIR /app
 
