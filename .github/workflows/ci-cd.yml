@@ -58,7 +58,7 @@ jobs:
           path: target/*.jar
 
   test:
-    name: Unit & Integration Tests
+    name: Unit Tests
     runs-on: ubuntu-latest
     needs: build
     services:
