@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: "21"
-          distribution: "eclipse-temurin"
+          distribution: "temurin"
           cache: maven
 
       - name: Build with Maven
@@ -48,7 +48,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: "21"
-          distribution: "eclipse-temurin"
+          distribution: "temurin"
           cache: maven
 
       - name: Run Checkstyle
@@ -81,7 +81,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: "21"
-          distribution: "eclipse-temurin"
+          distribution: "temurin"
           cache: maven
 
       - name: Run tests with coverage
