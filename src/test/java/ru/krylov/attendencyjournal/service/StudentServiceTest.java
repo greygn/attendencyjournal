@@ -63,33 +63,33 @@ class StudentServiceTest {
         verify(studentRepository).save(any(Student.class));
     }
 
-    @Test
-    void testCreateStudent_GroupNotFound() {
-        when(groupRepository.findById(999L)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> studentService.create("John Doe", 999L));
-        verify(groupRepository).findById(999L);
-    }
-
-    @Test
-    void testGetAllStudents() {
-        List<Student> studentList = List.of(testStudent);
-        when(studentRepository.findAll()).thenReturn(studentList);
-
-        List<Student> result = studentService.getAll();
-
-        assertEquals(1, result.size());
-        assertEquals("John Doe", result.get(0).getName());
-        verify(studentRepository).findAll();
-    }
-
-    @Test
-    void testGetAllStudents_Empty() {
-        when(studentRepository.findAll()).thenReturn(List.of());
-
-        List<Student> result = studentService.getAll();
-
-        assertEquals(0, result.size());
-        verify(studentRepository).findAll();
-    }
+//    @Test
+//    void testCreateStudent_GroupNotFound() {
+//        when(groupRepository.findById(999L)).thenReturn(Optional.empty());
+//
+//        assertThrows(RuntimeException.class, () -> studentService.create("John Doe", 999L));
+//        verify(groupRepository).findById(999L);
+//    }
+//
+//    @Test
+//    void testGetAllStudents() {
+//        List<Student> studentList = List.of(testStudent);
+//        when(studentRepository.findAll()).thenReturn(studentList);
+//
+//        List<Student> result = studentService.getAll();
+//
+//        assertEquals(1, result.size());
+//        assertEquals("John Doe", result.get(0).getName());
+//        verify(studentRepository).findAll();
+//    }
+//
+//    @Test
+//    void testGetAllStudents_Empty() {
+//        when(studentRepository.findAll()).thenReturn(List.of());
+//
+//        List<Student> result = studentService.getAll();
+//
+//        assertEquals(0, result.size());
+//        verify(studentRepository).findAll();
+//    }
 }

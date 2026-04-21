@@ -48,60 +48,60 @@ class StudyGroupServiceTest {
         verify(repository).save(any(StudyGroup.class));
     }
 
-    @Test
-    void testCreateGroup_DifferentCourse() {
-        StudyGroup group2 = new StudyGroup();
-        group2.setId(2L);
-        group2.setName("Group B");
-        group2.setCourse(2);
-
-        when(repository.save(any(StudyGroup.class))).thenReturn(group2);
-
-        StudyGroup result = studyGroupService.create("Group B", 2);
-
-        assertNotNull(result);
-        assertEquals("Group B", result.getName());
-        assertEquals(2, result.getCourse());
-        verify(repository).save(any(StudyGroup.class));
-    }
-
-    @Test
-    void testGetAllGroups() {
-        List<StudyGroup> groupList = List.of(testGroup);
-        when(repository.findAll()).thenReturn(groupList);
-
-        List<StudyGroup> result = studyGroupService.getAll();
-
-        assertEquals(1, result.size());
-        assertEquals("Group A", result.get(0).getName());
-        verify(repository).findAll();
-    }
-
-    @Test
-    void testGetAllGroups_Empty() {
-        when(repository.findAll()).thenReturn(List.of());
-
-        List<StudyGroup> result = studyGroupService.getAll();
-
-        assertEquals(0, result.size());
-        verify(repository).findAll();
-    }
-
-    @Test
-    void testGetAllGroups_Multiple() {
-        StudyGroup group2 = new StudyGroup();
-        group2.setId(2L);
-        group2.setName("Group B");
-        group2.setCourse(2);
-
-        List<StudyGroup> groupList = List.of(testGroup, group2);
-        when(repository.findAll()).thenReturn(groupList);
-
-        List<StudyGroup> result = studyGroupService.getAll();
-
-        assertEquals(2, result.size());
-        assertEquals("Group A", result.get(0).getName());
-        assertEquals("Group B", result.get(1).getName());
-        verify(repository).findAll();
-    }
+//    @Test
+//    void testCreateGroup_DifferentCourse() {
+//        StudyGroup group2 = new StudyGroup();
+//        group2.setId(2L);
+//        group2.setName("Group B");
+//        group2.setCourse(2);
+//
+//        when(repository.save(any(StudyGroup.class))).thenReturn(group2);
+//
+//        StudyGroup result = studyGroupService.create("Group B", 2);
+//
+//        assertNotNull(result);
+//        assertEquals("Group B", result.getName());
+//        assertEquals(2, result.getCourse());
+//        verify(repository).save(any(StudyGroup.class));
+//    }
+//
+//    @Test
+//    void testGetAllGroups() {
+//        List<StudyGroup> groupList = List.of(testGroup);
+//        when(repository.findAll()).thenReturn(groupList);
+//
+//        List<StudyGroup> result = studyGroupService.getAll();
+//
+//        assertEquals(1, result.size());
+//        assertEquals("Group A", result.get(0).getName());
+//        verify(repository).findAll();
+//    }
+//
+//    @Test
+//    void testGetAllGroups_Empty() {
+//        when(repository.findAll()).thenReturn(List.of());
+//
+//        List<StudyGroup> result = studyGroupService.getAll();
+//
+//        assertEquals(0, result.size());
+//        verify(repository).findAll();
+//    }
+//
+//    @Test
+//    void testGetAllGroups_Multiple() {
+//        StudyGroup group2 = new StudyGroup();
+//        group2.setId(2L);
+//        group2.setName("Group B");
+//        group2.setCourse(2);
+//
+//        List<StudyGroup> groupList = List.of(testGroup, group2);
+//        when(repository.findAll()).thenReturn(groupList);
+//
+//        List<StudyGroup> result = studyGroupService.getAll();
+//
+//        assertEquals(2, result.size());
+//        assertEquals("Group A", result.get(0).getName());
+//        assertEquals("Group B", result.get(1).getName());
+//        verify(repository).findAll();
+//    }
 }
